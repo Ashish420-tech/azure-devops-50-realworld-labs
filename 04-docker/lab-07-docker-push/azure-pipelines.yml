@@ -15,9 +15,10 @@ steps:
   displayName: Build and Push Docker Image
   inputs:
     containerRegistry: dockerhub-connection
-    repository: $(dockerHubRepo)
+    repository: your_dockerhub_username/lab07-nodejs-app
     command: buildAndPush
-    Dockerfile: 04-docker/lab-07-docker-push/Dockerfile
+    Dockerfile: 04-docker/lab-07-docker-image-push/Dockerfile
     tags: |
-      $(Build.BuildId)
       latest
+      $(Build.BuildId)
+
