@@ -1,0 +1,1 @@
+- Switched pipeline to self-hosted Default agent pool
