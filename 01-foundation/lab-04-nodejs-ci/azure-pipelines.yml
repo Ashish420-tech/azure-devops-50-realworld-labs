@@ -4,22 +4,30 @@ trigger:
       - main
 
 pool:
-  name: Default   # agent pool name, NOT agent name
+  name: Default   # self-hosted Windows agent
+
+variables:
+  APP_DIR: 01-foundation/lab-04-nodejs-ci
 
 steps:
 - script: |
-    echo "Running on self-hosted agent"
+    echo "Agent machine:"
     hostname
-    whoami
+    echo "Running from:"
+    cd $(APP_DIR)
+    dir
     node -v
     npm -v
-  displayName: "Verify agent and Node.js"
+  displayName: "Verify agent and app directory"
 
 - script: npm install
+  workingDirectory: $(APP_DIR)
   displayName: "Install dependencies"
 
 - script: npm test
+  workingDirectory: $(APP_DIR)
   displayName: "Run unit tests"
 
 - script: npm pack
+  workingDirectory: $(APP_DIR)
   displayName: "Package application"
