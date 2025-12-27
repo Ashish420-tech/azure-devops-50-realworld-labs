@@ -27,3 +27,7 @@
 **Prevention:**
 - Always validate toolchain with `which npm`
 - Keep Linux-only PATH for CI parity
+## Issue: npm failed due to missing package.json in mono-repo
+**Root Cause:** npm commands executed from repo root while package.json existed in subfolder  
+**Impact:** npm install failed with ENOENT  
+**Fix:** Set workingDirectory to application folder in Azure Pipelines YAML
