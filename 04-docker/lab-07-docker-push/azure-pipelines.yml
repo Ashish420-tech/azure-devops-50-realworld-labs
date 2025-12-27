@@ -1,5 +1,4 @@
-# Lab-07: Docker Image Build & Push to Docker Hub
-# This pipeline triggers ONLY when Lab-07 files change
+# Lab-07: Build and Push Docker Image to Docker Hub
 
 trigger:
   paths:
@@ -9,26 +8,27 @@ trigger:
 pr: none
 
 pool:
-  name: Default   # self-hosted agent (your Windows agent)
+  name: Default   # self-hosted Windows agent
 
 variables:
-  imageName: ashish420tech/nodejs-lab07
   dockerRegistryServiceConnection: dockerhub-service-connection
+  imageRepository: ashish420tech/nodejs-lab07
   dockerfilePath: 04-docker/lab-07-docker-push/Dockerfile
   buildContext: 04-docker/lab-07-docker-push
   tag: $(Build.BuildId)
 
 steps:
-  - checkout: self
+- checkout: self
 
-  - task: Docker@2
-    displayName: Build and Push Docker Image
-    inputs:
-      containerRegistry: $(dockerRegistryServiceConnection)
-      repository: $(imageName)
-      command: buildAndPush
-      Dockerfile: $(dockerfilePath)
-      buildContext: $(buildContext)
-      tags: |
-        $(tag)
-        latest
+- task: Docker@2
+  displayName: Build and Push Docker Image
+  inputs:
+    command: buildAndPush
+    containerRegistry: $(dockerRegistryServiceConnection)
+    repository: $(imageRepository)
+    dockerfile: $(dockerfilePath)
+    buildContext: $(buildContext)
+    tags: |
+      $(tag)
+      latest
+
