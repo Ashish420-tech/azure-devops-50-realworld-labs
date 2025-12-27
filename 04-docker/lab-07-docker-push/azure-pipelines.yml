@@ -12,7 +12,7 @@ pool:
   name: Default   # self-hosted agent (your Windows agent)
 
 variables:
-  imageName: nodejs-lab07
+  imageName: ashish420tech/nodejs-lab07
   dockerRegistryServiceConnection: dockerhub-service-connection
   dockerfilePath: 04-docker/lab-07-docker-push/Dockerfile
   buildContext: 04-docker/lab-07-docker-push
