@@ -1,5 +1,6 @@
-trigger:
-- main
+trigger: none
+pr: none
+- main :
 
 pool:
   name: Default   # your self-hosted Windows agent

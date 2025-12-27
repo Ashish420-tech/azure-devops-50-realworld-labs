@@ -1,7 +1,8 @@
 trigger:
-  branches:
+  paths:
     include:
-      - main
+      - 04-docker/lab-06-docker-security/*
+
 
 pool:
   name: Default

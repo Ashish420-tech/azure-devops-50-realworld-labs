@@ -1,7 +1,7 @@
 trigger:
-  branches:
+  paths:
     include:
-      - main
+      - 01-foundation/lab-04-nodejs-ci/*
 
 pool:
   name: Default   # self-hosted Windows agent
