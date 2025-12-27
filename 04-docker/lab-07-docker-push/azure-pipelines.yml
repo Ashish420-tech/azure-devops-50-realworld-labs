@@ -1,0 +1,23 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+variables:
+  imageName: lab07-nodejs-app
+  dockerHubRepo: ashishmondal420/lab07-nodejs-app
+
+steps:
+- checkout: self
+
+- task: Docker@2
+  displayName: Build and Push Docker Image
+  inputs:
+    containerRegistry: dockerhub-connection
+    repository: $(dockerHubRepo)
+    command: buildAndPush
+    Dockerfile: 04-docker/lab-07-docker-push/Dockerfile
+    tags: |
+      $(Build.BuildId)
+      latest
