@@ -1,36 +1,22 @@
 trigger:
-  branches:
-    include:
-      - main
+- main
 
 pool:
-  name: Default   # your self-hosted agent pool
+  name: Default
 
-stages:
-- stage: Build
-  displayName: Build Stage
-  jobs:
-  - job: DockerBuild
-    displayName: Build Docker Image
-    steps:
+steps:
+- checkout: self
 
-    # Checkout source
-    - checkout: self
-      clean: true
+- script: |
+    echo "Agent:"
+    hostname
+    docker version
+  displayName: Verify agent and Docker
 
-    # (Optional) Show repo structure for debugging
-    - script: |
-        echo "Listing repo root"
-        dir
-      displayName: Debug - Repo Structure
-
-    # Build Docker image with NO CACHE (CRITICAL FIX)
-    - task: Docker@2
-      displayName: Build Docker image (no cache)
-      inputs:
-        command: build
-        Dockerfile: 04-docker/lab-05-docker-ci/Dockerfile
-        buildContext: .
-        arguments: --no-cache
-        tags: |
-          $(Build.BuildId)
+- task: Docker@2
+  displayName: Build Docker image
+  inputs:
+    command: build
+    Dockerfile: 04-docker/lab-05-docker-ci/Dockerfile
+    buildContext: .
+    arguments: --no-cache
