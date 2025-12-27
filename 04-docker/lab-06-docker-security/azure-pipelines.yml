@@ -1,0 +1,32 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: Default
+
+variables:
+  imageName: lab06-nodejs-secure
+  imageTag: $(Build.BuildId)
+
+steps:
+- checkout: self
+
+- task: Docker@2
+  displayName: Build Docker image
+  inputs:
+    command: build
+    Dockerfile: 04-docker/lab-06-docker-security/Dockerfile
+    tags: |
+      $(imageName):$(imageTag)
+
+- script: |
+    echo Installing Trivy...
+    choco install trivy -y
+  displayName: Install Trivy
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+
+- script: |
+    trivy image --severity HIGH,CRITICAL --exit-code 1 $(imageName):$(imageTag)
+  displayName: Scan Docker image (Trivy)
