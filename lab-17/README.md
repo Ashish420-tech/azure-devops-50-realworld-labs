@@ -11,3 +11,9 @@ Build a clean, isolated multi-stage Azure DevOps pipeline using YAML.
 
 ## Status
 🚧 In Progress
+## Status
+✅ Completed
+
+## Validation
+- CI validated on feature branch (PR)
+- CI re-validated on main branch after merge
