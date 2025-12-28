@@ -1,0 +1,29 @@
+# Lab-09: Basic Docker Build using Azure DevOps
+
+trigger:
+  paths:
+    include:
+      - 03-nodejs/lab-09-nodejs-docker-basic/*
+
+pr: none
+
+pool:
+  name: Default   # self-hosted agent
+
+variables:
+  APP_DIR: 03-nodejs/lab-09-nodejs-docker-basic
+  IMAGE_NAME: lab09-docker-basic
+
+steps:
+- checkout: self
+
+- script: |
+    echo "Checking Docker availability"
+    docker version
+  displayName: "Verify Docker"
+  workingDirectory: $(APP_DIR)
+
+- script: |
+    docker build -t $(IMAGE_NAME):$(Build.BuildId) .
+  displayName: "Build Docker Image"
+  workingDirectory: $(APP_DIR)
