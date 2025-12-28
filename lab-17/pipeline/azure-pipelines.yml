@@ -1,0 +1,17 @@
+trigger:
+  paths:
+    include:
+      - lab-17/*
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildApp
+    steps:
+    - script: |
+        echo "Running Lab-17 Build Stage"
+        node -v || echo "Node not installed"
+      displayName: "Verify Environment"
