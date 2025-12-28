@@ -1,11 +1,18 @@
+
 trigger:
 - main
 
 pool:
-  name: Default   # self-hosted agent
+  name: Default   # self-hosted agent on same machine as Minikube
 
 steps:
 - checkout: self
+
+- script: |
+    echo "Kubernetes context:"
+    kubectl config current-context
+    kubectl get nodes
+  displayName: "Verify Minikube Access"
 
 - script: |
     cd 03-nodejs/lab-14-kubernetes-deploy/app
@@ -15,4 +22,4 @@ steps:
 - script: |
     kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/deployment.yml
     kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/service.yml
-  displayName: "Deploy to Kubernetes"
+  displayName: "Deploy to Local Minikube"
