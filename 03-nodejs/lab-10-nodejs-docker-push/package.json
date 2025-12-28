@@ -1,0 +1,7 @@
+{
+  "name": "lab-10-docker-push",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

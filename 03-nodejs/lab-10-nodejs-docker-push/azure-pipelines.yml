@@ -1,0 +1,35 @@
+# Lab-10: Docker Build & Push to Docker Hub
+
+trigger:
+  paths:
+    include:
+      - 03-nodejs/lab-10-nodejs-docker-push/*
+
+pr: none
+
+pool:
+  name: Default   # self-hosted agent
+
+variables:
+  APP_DIR: 03-nodejs/lab-10-nodejs-docker-push
+  IMAGE_NAME: ashishmondal420/lab10-nodejs
+
+steps:
+- checkout: self
+
+- script: |
+    docker version
+  displayName: "Verify Docker"
+  workingDirectory: $(APP_DIR)
+
+- task: Docker@2
+  displayName: "Build & Push Docker Image"
+  inputs:
+    containerRegistry: dockerhub-ashishmondal420
+    repository: $(IMAGE_NAME)
+    command: buildAndPush
+    Dockerfile: $(APP_DIR)/Dockerfile
+    buildContext: $(APP_DIR)
+    tags: |
+      $(Build.BuildId)
+      latest
