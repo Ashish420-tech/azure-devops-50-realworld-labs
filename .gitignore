@@ -1,1 +1,5 @@
 node_modules/
+# Local binaries
+minikube-linux-amd64
+minikube
+node_modules/
