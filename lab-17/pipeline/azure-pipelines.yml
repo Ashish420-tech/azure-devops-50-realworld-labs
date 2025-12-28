@@ -22,3 +22,19 @@ stages:
         npm test
       workingDirectory: lab-17/app
       displayName: "Install dependencies & run tests"
+# ---------------- DOCKER BUILD ----------------
+- stage: DockerBuild
+  displayName: "Docker Build Stage"
+  dependsOn: Package
+  jobs:
+  - job: DockerJob
+    steps:
+    - task: Docker@2
+      displayName: "Build Docker Image"
+      inputs:
+        command: build
+        Dockerfile: lab-17/app/Dockerfile
+        buildContext: lab-17/app
+        repository: lab17-nodejs
+        tags: |
+          $(Build.BuildId)
