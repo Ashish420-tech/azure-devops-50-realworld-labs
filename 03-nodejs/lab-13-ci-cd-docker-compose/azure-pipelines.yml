@@ -1,0 +1,18 @@
+trigger:
+  paths:
+    include:
+      - 03-nodejs/lab-13-ci-cd-docker-compose/*
+
+pr: none
+
+pool:
+  name: Default   # self-hosted agent
+
+steps:
+- checkout: self
+
+- script: |
+    docker compose down || true
+    docker compose up -d --build
+  displayName: "Auto Deploy using Docker Compose"
+  workingDirectory: 03-nodejs/lab-13-ci-cd-docker-compose
