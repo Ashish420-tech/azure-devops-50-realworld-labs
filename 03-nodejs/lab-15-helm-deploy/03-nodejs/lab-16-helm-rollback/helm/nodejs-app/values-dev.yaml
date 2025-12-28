@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: lab16
+  tag: dev
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 3000
+  targetPort: 3000
+
+env: dev
+
+resources: {}

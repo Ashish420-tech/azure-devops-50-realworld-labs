@@ -1,0 +1,6 @@
+replicaCount: 3
+image:
+  repository: lab16
+  tag: prod
+service:
+  type: ClusterIP
