@@ -15,11 +15,18 @@ steps:
   displayName: "Verify Minikube Access"
 
 - script: |
+    echo "Switching Docker to Minikube daemon"
+    minikube docker-env --shell=cmd
+  displayName: "Configure Docker for Minikube"
+
+- script: |
     cd 03-nodejs/lab-14-kubernetes-deploy/app
     docker build -t lab14-nodejs:latest .
-  displayName: "Build Docker Image"
+  displayName: "Build Docker Image in Minikube"
 
 - script: |
     kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/deployment.yml
     kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/service.yml
+    kubectl rollout status deployment/lab14-nodejs-deployment
   displayName: "Deploy to Local Minikube"
+
