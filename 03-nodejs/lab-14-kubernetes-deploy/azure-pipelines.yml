@@ -1,0 +1,18 @@
+trigger:
+- main
+
+pool:
+  name: Default   # self-hosted agent
+
+steps:
+- checkout: self
+
+- script: |
+    cd 03-nodejs/lab-14-kubernetes-deploy/app
+    docker build -t lab14-nodejs:latest .
+  displayName: "Build Docker Image"
+
+- script: |
+    kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/deployment.yml
+    kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/service.yml
+  displayName: "Deploy to Kubernetes"

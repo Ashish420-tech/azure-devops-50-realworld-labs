@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab14-nodejs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab14-nodejs
+  template:
+    metadata:
+      labels:
+        app: lab14-nodejs
+    spec:
+      containers:
+        - name: nodejs-container
+          image: lab14-nodejs:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
