@@ -1,0 +1,71 @@
+# =========================================
+# Lab-18: CI + CD (Docker Image Push)
+# =========================================
+
+trigger:
+  paths:
+    include:
+      - lab-18/*
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  imageName: lab18-nodejs
+
+# =========================================
+# STAGES
+# =========================================
+
+stages:
+
+# -----------------------------------------
+# CI STAGE
+# -----------------------------------------
+- stage: CI
+  displayName: "CI: Build and Test"
+  jobs:
+  - job: BuildAndTest
+    displayName: "Build & Test Node.js App"
+    steps:
+
+    - task: NodeTool@0
+      displayName: "Install Node.js"
+      inputs:
+        versionSpec: "18.x"
+
+    - script: |
+        npm install
+      displayName: "Install Dependencies"
+      workingDirectory: lab-18/app
+
+    - script: |
+        npm test
+      displayName: "Run Tests"
+      workingDirectory: lab-18/app
+
+# -----------------------------------------
+# CD STAGE
+# -----------------------------------------
+- stage: CD
+  displayName: "CD: Build and Push Docker Image"
+  dependsOn: CI
+  condition: succeeded()
+  jobs:
+  - job: DockerPush
+    displayName: "Docker Build & Push"
+    steps:
+
+    - task: Docker@2
+      displayName: "Build and Push Docker Image to Docker Hub"
+      inputs:
+        command: buildAndPush
+        containerRegistry: dockerhub-service-connection
+        repository: $(DOCKERHUB_USERNAME)/$(imageName)
+        dockerfile: lab-18/app/Dockerfile
+        buildContext: lab-18/app
+        tags: |
+          $(Build.BuildId)
+          latest
