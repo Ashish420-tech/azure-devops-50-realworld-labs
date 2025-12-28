@@ -3,30 +3,32 @@ trigger:
 - main
 
 pool:
-  name: Default   # self-hosted agent on same machine as Minikube
+  name: Default   # self-hosted Windows agent
 
 steps:
 - checkout: self
 
 - script: |
-    echo "Kubernetes context:"
+    echo === Verify Kubernetes ===
     kubectl config current-context
     kubectl get nodes
   displayName: "Verify Minikube Access"
 
 - script: |
-    echo "Switching Docker to Minikube daemon"
-    minikube docker-env --shell=cmd
-  displayName: "Configure Docker for Minikube"
-
-- script: |
     cd 03-nodejs/lab-14-kubernetes-deploy/app
     docker build -t lab14-nodejs:latest .
-  displayName: "Build Docker Image in Minikube"
+  displayName: "Build Docker Image"
+
+- script: |
+    echo === Load image into Minikube ===
+    minikube image load lab14-nodejs:latest
+  displayName: "Load Image into Minikube"
 
 - script: |
     kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/deployment.yml
     kubectl apply -f 03-nodejs/lab-14-kubernetes-deploy/k8s/service.yml
-    kubectl rollout status deployment/lab14-nodejs-deployment
-  displayName: "Deploy to Local Minikube"
+    kubectl rollout restart deployment lab14-nodejs-deployment
+    kubectl rollout status deployment lab14-nodejs-deployment
+  displayName: "Deploy to Minikube"
+
 
