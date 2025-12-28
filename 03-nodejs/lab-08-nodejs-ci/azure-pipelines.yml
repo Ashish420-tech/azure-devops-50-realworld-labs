@@ -1,0 +1,35 @@
+# Lab-08: Node.js CI Pipeline
+
+trigger:
+  paths:
+    include:
+      - 03-nodejs/lab-08-nodejs-ci/*
+
+pr: none
+
+pool:
+  name: Default   # self-hosted agent
+
+variables:
+  APP_DIR: 03-nodejs/lab-08-nodejs-ci
+
+steps:
+- checkout: self
+
+- script: |
+    echo "Agent hostname:"
+    hostname
+    echo "Node version:"
+    node -v
+    echo "NPM version:"
+    npm -v
+  displayName: "Verify Agent & Node"
+  workingDirectory: $(APP_DIR)
+
+- script: npm install
+  displayName: "Install Dependencies"
+  workingDirectory: $(APP_DIR)
+
+- script: npm test
+  displayName: "Run Unit Tests"
+  workingDirectory: $(APP_DIR)

@@ -1,0 +1,8 @@
+{
+  "name": "lab-08-nodejs-ci",
+  "version": "1.0.0",
+  "description": "Azure DevOps Lab-08 Node.js CI",
+  "scripts": {
+    "test": "echo \"CI test passed successfully\" && exit 0"
+  }
+}
