@@ -3,3 +3,9 @@ node_modules/
 minikube-linux-amd64
 minikube
 node_modules/
+# Local binaries
+minikube
+minikube-linux-amd64
+
+# Node
+node_modules/
