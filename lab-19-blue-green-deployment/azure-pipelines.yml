@@ -1,0 +1,40 @@
+trigger:
+- none   # manual trigger (safe for prod-style deploy)
+
+pool:
+  name: Default   # your self-hosted agent
+
+stages:
+- stage: Deploy_Blue
+  displayName: Deploy BLUE
+  jobs:
+  - job: Blue
+    steps:
+    - checkout: self
+    - script: |
+        kubectl apply -f k8s/deployment-blue.yaml
+        kubectl apply -f k8s/service.yaml
+      displayName: Deploy Blue Version
+
+- stage: Deploy_Green
+  displayName: Deploy GREEN
+  dependsOn: Deploy_Blue
+  jobs:
+  - job: Green
+    steps:
+    - checkout: self
+    - script: |
+        kubectl apply -f k8s/deployment-green.yaml
+      displayName: Deploy Green Version
+
+- stage: Switch_Traffic
+  displayName: Switch Traffic to GREEN
+  dependsOn: Deploy_Green
+  jobs:
+  - job: Switch
+    steps:
+    - checkout: self
+    - script: |
+        sed -i 's/version: blue/version: green/' k8s/service.yaml
+        kubectl apply -f k8s/service.yaml
+      displayName: Switch Traffic to Green
