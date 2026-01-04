@@ -1,8 +1,7 @@
-trigger:
-- none   # manual trigger (safe for prod-style deploy)
+trigger: none   # manual run (production-style)
 
 pool:
-  name: Default   # your self-hosted agent
+  name: Default   # your self-hosted Windows agent
 
 stages:
 - stage: Deploy_Blue
@@ -14,6 +13,7 @@ stages:
     - script: |
         kubectl apply -f k8s/deployment-blue.yaml
         kubectl apply -f k8s/service.yaml
+      workingDirectory: lab-19-blue-green-deployment
       displayName: Deploy Blue Version
 
 - stage: Deploy_Green
@@ -25,6 +25,7 @@ stages:
     - checkout: self
     - script: |
         kubectl apply -f k8s/deployment-green.yaml
+      workingDirectory: lab-19-blue-green-deployment
       displayName: Deploy Green Version
 
 - stage: Switch_Traffic
@@ -34,7 +35,10 @@ stages:
   - job: Switch
     steps:
     - checkout: self
-    - script: |
-        sed -i 's/version: blue/version: green/' k8s/service.yaml
+    - powershell: |
+        (Get-Content k8s/service.yaml) `
+          -replace 'version: blue','version: green' |
+        Set-Content k8s/service.yaml
         kubectl apply -f k8s/service.yaml
+      workingDirectory: lab-19-blue-green-deployment
       displayName: Switch Traffic to Green
