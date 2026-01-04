@@ -1,7 +1,7 @@
-trigger: none   # manual trigger (production style)
+trigger: none   # manual trigger
 
 pool:
-  name: Default   # self-hosted Windows agent
+  name: Default   # will pick wsl-agent (Linux)
 
 stages:
 # ======================
@@ -11,16 +11,15 @@ stages:
   displayName: Deploy BLUE
   jobs:
   - job: Blue
-    displayName: Deploy Blue Version
+    displayName: Blue Deployment
     steps:
     - checkout: self
 
-    - powershell: |
-        $env:KUBECONFIG = "$env:USERPROFILE\.kube\config"
-        kubectl apply -f k8s/deployment-blue.yaml --validate=false
-        kubectl apply -f k8s/service.yaml --validate=false
+    - bash: |
+        kubectl apply -f k8s/deployment-blue.yaml
+        kubectl apply -f k8s/service.yaml
       workingDirectory: lab-19-blue-green-deployment
-      displayName: Apply Blue Deployment
+      displayName: Apply Blue Manifests
 
 # ======================
 # STAGE 2: DEPLOY GREEN
@@ -30,15 +29,14 @@ stages:
   dependsOn: Deploy_Blue
   jobs:
   - job: Green
-    displayName: Deploy Green Version
+    displayName: Green Deployment
     steps:
     - checkout: self
 
-    - powershell: |
-        $env:KUBECONFIG = "$env:USERPROFILE\.kube\config"
-        kubectl apply -f k8s/deployment-green.yaml --validate=false
+    - bash: |
+        kubectl apply -f k8s/deployment-green.yaml
       workingDirectory: lab-19-blue-green-deployment
-      displayName: Apply Green Deployment
+      displayName: Apply Green Manifests
 
 # ======================
 # STAGE 3: SWITCH TRAFFIC
@@ -48,17 +46,12 @@ stages:
   dependsOn: Deploy_Green
   jobs:
   - job: Switch
-    displayName: Switch Service Selector
+    displayName: Traffic Switch
     steps:
     - checkout: self
 
-    - powershell: |
-        $env:KUBECONFIG = "$env:USERPROFILE\.kube\config"
-
-        (Get-Content k8s/service.yaml) `
-          -replace 'version:\s*blue','version: green' |
-        Set-Content k8s/service.yaml
-
-        kubectl apply -f k8s/service.yaml --validate=false
+    - bash: |
+        sed -i 's/version: blue/version: green/' k8s/service.yaml
+        kubectl apply -f k8s/service.yaml
       workingDirectory: lab-19-blue-green-deployment
-      displayName: Switch Traffic to Green
+      displayName: Switch Service Selector
