@@ -1,12 +1,12 @@
-trigger: none   # Manual trigger (production style)
+trigger: none   # manual trigger (production style)
 
 pool:
-  name: Default   # Self-hosted Windows agent
+  name: Default   # self-hosted Windows agent
 
 stages:
-# =========================
+# ======================
 # STAGE 1: DEPLOY BLUE
-# =========================
+# ======================
 - stage: Deploy_Blue
   displayName: Deploy BLUE
   jobs:
@@ -22,9 +22,9 @@ stages:
       workingDirectory: lab-19-blue-green-deployment
       displayName: Apply Blue Deployment
 
-# =========================
+# ======================
 # STAGE 2: DEPLOY GREEN
-# =========================
+# ======================
 - stage: Deploy_Green
   displayName: Deploy GREEN
   dependsOn: Deploy_Blue
@@ -40,9 +40,9 @@ stages:
       workingDirectory: lab-19-blue-green-deployment
       displayName: Apply Green Deployment
 
-# =========================
+# ======================
 # STAGE 3: SWITCH TRAFFIC
-# =========================
+# ======================
 - stage: Switch_Traffic
   displayName: Switch Traffic to GREEN
   dependsOn: Deploy_Green
