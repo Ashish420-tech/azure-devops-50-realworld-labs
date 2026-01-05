@@ -3,7 +3,9 @@ pipeline {
 
     environment {
         IMAGE = "ashishmondal420/lab29"
-        TAG   = "v1"
+        TAG = "v1"
+        RELEASE = "lab29"
+        CHART = "helm/lab29"
     }
 
     stages {
@@ -11,17 +13,11 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/Ashish420-tech/azure-devops-50-realworld-labs.git'
+                    url: 'https://github.com/Ashish420-tech/azure-devops-50-realworld-labs.git'
             }
         }
 
-        stage('Build Image') {
-            steps {
-                sh 'docker build -t $IMAGE:$TAG app/'
-            }
-        }
-
-        stage('Push Image') {
+        stage('Build & Push Image') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
@@ -29,6 +25,7 @@ pipeline {
                     passwordVariable: 'P'
                 )]) {
                     sh '''
+                    docker build -t $IMAGE:$TAG app/
                     echo $P | docker login -u $U --password-stdin
                     docker push $IMAGE:$TAG
                     '''
@@ -36,14 +33,17 @@ pipeline {
             }
         }
 
-        stage('Deploy via Helm') {
+        stage('Deploy with Helm') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh '''
-                    helm upgrade --install lab29 helm/lab29
-                    '''
+                    sh 'helm upgrade --install $RELEASE $CHART'
                 }
             }
         }
+    }
+
+    post {
+        success { echo "✅ Deployment successful" }
+        failure { echo "❌ Deployment failed" }
     }
 }
