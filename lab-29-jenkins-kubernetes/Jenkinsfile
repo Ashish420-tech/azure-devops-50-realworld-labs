@@ -2,48 +2,59 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = "ashishmondal420/lab29"
-        TAG = "v1"
+        IMAGE   = "ashishmondal420/lab29"
+        TAG     = "v1"
         RELEASE = "lab29"
-        CHART = "helm/lab29"
+        CHART   = "helm/lab29"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/Ashish420-tech/azure-devops-50-realworld-labs.git'
+                checkout scm
             }
         }
 
-        stage('Build & Push Image') {
+        stage('Build & Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'U',
-                    passwordVariable: 'P'
-                )]) {
-                    sh '''
-                    docker build -t $IMAGE:$TAG app/
-                    echo $P | docker login -u $U --password-stdin
-                    docker push $IMAGE:$TAG
-                    '''
+                dir('lab-29-jenkins-kubernetes') {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh '''
+                        docker build -t $IMAGE:$TAG app
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push $IMAGE:$TAG
+                        '''
+                    }
                 }
             }
         }
 
         stage('Deploy with Helm') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh 'helm upgrade --install $RELEASE $CHART'
+                dir('lab-29-jenkins-kubernetes') {
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        helm upgrade --install $RELEASE $CHART \
+                          --set image.repository=$IMAGE \
+                          --set image.tag=$TAG
+                        '''
+                    }
                 }
             }
         }
     }
 
     post {
-        success { echo "✅ Deployment successful" }
-        failure { echo "❌ Deployment failed" }
+        success {
+            echo "✅ Lab 29 deployment successful"
+        }
+        failure {
+            echo "❌ Lab 29 deployment failed"
+        }
     }
 }
