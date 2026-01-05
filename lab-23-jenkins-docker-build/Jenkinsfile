@@ -16,26 +16,32 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
+            sh '''
+          docker build \
+            -t $IMAGE_NAME:latest \
+            -f lab-23-jenkins-docker-build/Dockerfile \
+            lab-23-jenkins-docker-build
+        '''
             }
         }
 
-        stage('Push Image') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                      docker push $IMAGE_NAME:latest
-                    '''
-                }
-            }
+stage('Push Image') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh '''
+              docker images | grep lab23-jenkins-cicd
+              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+              docker push $IMAGE_NAME:latest
+            '''
         }
+    }
+}
 
-        stage('Deploy (CD)') {
+    stage('Deploy (CD)') {
             steps {
                 sh '''
                   docker rm -f $CONTAINER_NAME || true
