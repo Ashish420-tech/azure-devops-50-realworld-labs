@@ -36,18 +36,24 @@ pipeline {
 
         stage('Deploy GREEN to Kubernetes') {
             steps {
-                sh '''
-                  kubectl apply -f lab-27-jenkins-blue-green/k8s/green-deployment.yaml
-                '''
+               withCredentials([file(credentialsId: 'kubeconfig-creds', variable: 'KUBECONFIG')]) {
+            sh '''
+              export KUBECONFIG=$KUBECONFIG
+              kubectl version --client
+              kubectl get nodes
+              kubectl apply -f lab-27-jenkins-blue-green/k8s/green-deployment.yaml
+            '''
             }
         }
 
         stage('Switch Traffic to GREEN') {
             steps {
-                sh '''
-                  kubectl patch svc web-service \
-                  -p '{"spec":{"selector":{"app":"web","version":"green"}}}'
-                '''
+               withCredentials([file(credentialsId: 'kubeconfig-creds', variable: 'KUBECONFIG')]) {
+            sh '''
+              export KUBECONFIG=$KUBECONFIG
+              kubectl patch svc web-service \
+              -p '{"spec":{"selector":{"app":"web","version":"green"}}}'
+            '''
             }
         }
     }
