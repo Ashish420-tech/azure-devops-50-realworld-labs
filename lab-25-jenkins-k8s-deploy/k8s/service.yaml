@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab25-jenkins-service
+spec:
+  type: NodePort
+  selector:
+    app: lab25-jenkins
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 30007
+
