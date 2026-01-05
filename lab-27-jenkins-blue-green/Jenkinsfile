@@ -93,3 +93,6 @@ stage('Rollback to BLUE') {
         '''
     }
 }
+parameters {
+    booleanParam(name: 'ROLLBACK', defaultValue: false, description: 'Rollback to BLUE')
+}
