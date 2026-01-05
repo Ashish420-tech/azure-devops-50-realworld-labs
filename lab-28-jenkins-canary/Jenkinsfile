@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "ashishmondal420/canary-nginx"
+        IMAGE_TAG  = "latest"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Canary Image') {
+            steps {
+                sh '''
+                  docker build -t $IMAGE_NAME:$IMAGE_TAG app
+                '''
+            }
+        }
+
+        stage('Push Canary Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                      echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                      docker push $IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy Stable (if not exists)') {
+            steps {
+                sh '''
+                  export KUBECONFIG=$KUBECONFIG
+                  kubectl apply -f k8s/stable-deployment.yaml
+                  kubectl apply -f k8s/service.yaml
+                '''
+            }
+        }
+
+        stage('Deploy Canary') {
+            steps {
+                sh '''
+                  export KUBECONFIG=$KUBECONFIG
+                  kubectl apply -f k8s/canary-deployment.yaml
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Canary deployed successfully. Traffic is now partially routed to Canary."
+        }
+        failure {
+            echo "❌ Pipeline failed. Stable ver
