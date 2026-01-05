@@ -9,16 +9,12 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build Docker Image (GREEN)') {
             steps {
                 sh '''
-                  docker build -t $GREEN_IMAGE app
+                  pwd
+                  ls -l
+                  docker build -t $GREEN_IMAGE ./lab-27-jenkins-blue-green/app
                 '''
             }
         }
@@ -41,7 +37,7 @@ pipeline {
         stage('Deploy GREEN to Kubernetes') {
             steps {
                 sh '''
-                  kubectl apply -f k8s/green-deployment.yaml
+                  kubectl apply -f lab-27-jenkins-blue-green/k8s/green-deployment.yaml
                 '''
             }
         }
