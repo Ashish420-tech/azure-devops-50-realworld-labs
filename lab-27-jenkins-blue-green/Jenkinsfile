@@ -81,3 +81,15 @@ pipeline {
         }
     }
 }
+stage('Rollback to BLUE') {
+    when {
+        expression { return params.ROLLBACK == true }
+    }
+    steps {
+        sh '''
+          export KUBECONFIG=/var/lib/jenkins/.kube/config
+          kubectl patch svc web-service \
+          -p '{"spec":{"selector":{"app":"web","version":"blue"}}}'
+        '''
+    }
+}
