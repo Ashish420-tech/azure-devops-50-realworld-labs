@@ -43,10 +43,19 @@ stage('Push Image') {
 
     stage('Deploy (CD)') {
             steps {
-                sh '''
-                  docker rm -f $CONTAINER_NAME || true
-                  docker run -d -p 3000:3000 --name $CONTAINER_NAME $IMAGE_NAME:latest
-                '''
+               sh '''
+          echo "Stopping old container if exists..."
+          docker rm -f lab23-jenkins-app || true
+
+          echo "Removing old image (safety)..."
+          docker rmi -f ashishmondal420/lab23-jenkins-cicd:latest || true
+
+          echo "Pulling latest image..."
+          docker pull ashishmondal420/lab23-jenkins-cicd:latest
+
+          echo "Starting new container..."
+          docker run -d -p 3000:3000 --name lab23-jenkins-app ashishmondal420/lab23-jenkins-cicd:latest
+        '''
             }
         }
 
