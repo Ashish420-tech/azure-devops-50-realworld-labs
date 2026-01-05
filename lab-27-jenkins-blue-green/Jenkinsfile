@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_USER = "ashishmondal420"
+        IMAGE_NAME = "bluegreen-nginx"
+        GREEN_IMAGE = "${DOCKERHUB_USER}/${IMAGE_NAME}:green"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image (GREEN)') {
+            steps {
+                sh '''
+                  docker build -t $GREEN_IMAGE app
+                '''
+            }
+        }
+
+        stage('Push Image to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                      echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                      docker push $GREEN_IMAGE
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy GREEN to Kubernetes') {
+            steps {
+                sh '''
+                  kubectl apply -f k8s/green-deployment.yaml
+                '''
+            }
+        }
+
+        stage('Switch Traffic to GREEN') {
+            steps {
+                sh '''
+                  kubectl patch svc web-service \
+                  -p '{"spec":{"selector":{"app":"web","version":"green"}}}'
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ GREEN deployment successful. Traffic switched!"
+        }
+        failure {
+            echo "❌ Deployment failed. BLUE is still serving traffic."
+        }
+    }
+}
