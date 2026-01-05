@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "ashishmondal420/lab23-jenkins-cicd"
+        DOCKER_IMAGE = "ashishmondal420/lab23-jenkins-cicd:latest"
+        KUBECTL = "/usr/local/bin/kubectl"
+        K8S_DIR = "lab-26-jenkins-blue-green/k8s"
     }
 
     stages {
@@ -15,35 +17,32 @@ pipeline {
 
         stage('Build & Push Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
+                withCredentials([string(credentialsId: 'dockerhub-creds', variable: 'DOCKER_PASS')]) {
                     sh '''
-                      docker build -t $IMAGE_NAME:latest \
-                        -f lab-23-jenkins-docker-build/Dockerfile \
-                        lab-23-jenkins-docker-build
+                        docker build -t ${DOCKER_IMAGE} \
+                          -f lab-23-jenkins-docker-build/Dockerfile \
+                          lab-23-jenkins-docker-build
 
-                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                      docker push $IMAGE_NAME:latest
+                        echo "$DOCKER_PASS" | docker login -u ashishmondal420 --password-stdin
+                        docker push ${DOCKER_IMAGE}
                     '''
                 }
             }
         }
 
-stage('Deploy GREEN Version') {
-    steps {
-        sh 'sudo -u ashish /usr/local/bin/kubectl apply -f lab-26-jenkins-blue-green/k8s/deployment-green.yaml'
-    }
-}
-
-
-     stage('Smoke Test GREEN') {
+        stage('Deploy GREEN Version') {
             steps {
                 sh '''
-                  sleep 10
-                  kubectl get pods -l version=green
+                    sudo -u ashish ${KUBECTL} apply -f ${K8S_DIR}/deployment-green.yaml
+                '''
+            }
+        }
+
+        stage('Smoke Test GREEN') {
+            steps {
+                sh '''
+                    sleep 10
+                    sudo -u ashish ${KUBECTL} get pods -l version=green
                 '''
             }
         }
@@ -51,8 +50,8 @@ stage('Deploy GREEN Version') {
         stage('Switch Traffic to GREEN') {
             steps {
                 sh '''
-                  sudo -u ashish kubectl patch svc myapp-service -p \
-                  '{"spec":{"selector":{"app":"myapp","version":"green"}}}'
+                    sudo -u ashish ${KUBECTL} patch svc myapp-service \
+                      -p '{"spec":{"selector":{"app":"myapp","version":"green"}}}'
                 '''
             }
         }
@@ -60,19 +59,16 @@ stage('Deploy GREEN Version') {
 
     post {
         failure {
+            echo "❌ Deployment failed — rolling back to BLUE"
+
             sh '''
-              echo "Rolling back to BLUE..."
-              sudo -u ashish kubectl patch svc myapp-service -p \
-              '{"spec":{"selector":{"app":"myapp","version":"blue"}}}'
+                sudo -u ashish ${KUBECTL} patch svc myapp-service \
+                  -p '{"spec":{"selector":{"app":"myapp","version":"blue"}}}'
             '''
         }
-    }
-}
-stage('Smoke Test GREEN') {
-    steps {
-        sh '''
-        sleep 10
-        sudo -u ashish /usr/local/bin/kubectl get pods -l version=green
-        '''
+
+        success {
+            echo "✅ Blue-Green deployment completed successfully"
+        }
     }
 }
