@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKERHUB_USER = "ashishmondal420"
-        IMAGE_NAME = "bluegreen-nginx"
-        GREEN_IMAGE = "${DOCKERHUB_USER}/${IMAGE_NAME}:green"
+        IMAGE_NAME     = "bluegreen-nginx"
+        GREEN_IMAGE    = "${DOCKERHUB_USER}/${IMAGE_NAME}:green"
     }
 
     stages {
@@ -12,8 +12,11 @@ pipeline {
         stage('Build Docker Image (GREEN)') {
             steps {
                 sh '''
+                  echo "=== Workspace ==="
                   pwd
                   ls -l
+
+                  echo "=== Build Image ==="
                   docker build -t $GREEN_IMAGE ./lab-27-jenkins-blue-green/app
                 '''
             }
@@ -21,13 +24,15 @@ pipeline {
 
         stage('Push Image to DockerHub') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
                     sh '''
-                      echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                       docker push $GREEN_IMAGE
                     '''
                 }
@@ -36,34 +41,43 @@ pipeline {
 
         stage('Deploy GREEN to Kubernetes') {
             steps {
-               withCredentials([file(credentialsId: 'kubeconfig-creds', variable: 'KUBECONFIG')]) {
-            sh '''
-              export KUBECONFIG=$KUBECONFIG
-              kubectl version --client
-              kubectl get nodes
-              kubectl apply -f lab-27-jenkins-blue-green/k8s/green-deployment.yaml
-            '''
+                withCredentials([
+                    file(credentialsId: 'kubeconfig-creds', variable: 'KUBECONFIG')
+                ]) {
+                    sh '''
+                      export KUBECONFIG=$KUBECONFIG
+                      echo "=== K8s Access Check ==="
+                      kubectl get nodes
+
+                      echo "=== Deploy GREEN ==="
+                      kubectl apply -f lab-27-jenkins-blue-green/k8s/green-deployment.yaml
+                    '''
+                }
             }
         }
 
         stage('Switch Traffic to GREEN') {
             steps {
-               withCredentials([file(credentialsId: 'kubeconfig-creds', variable: 'KUBECONFIG')]) {
-            sh '''
-              export KUBECONFIG=$KUBECONFIG
-              kubectl patch svc web-service \
-              -p '{"spec":{"selector":{"app":"web","version":"green"}}}'
-            '''
+                withCredentials([
+                    file(credentialsId: 'kubeconfig-creds', variable: 'KUBECONFIG')
+                ]) {
+                    sh '''
+                      export KUBECONFIG=$KUBECONFIG
+                      echo "=== Switch Service Selector ==="
+                      kubectl patch svc web-service \
+                      -p '{"spec":{"selector":{"app":"web","version":"green"}}}'
+                    '''
+                }
             }
         }
     }
 
     post {
         success {
-            echo "✅ GREEN deployment successful. Traffic switched!"
+            echo "✅ GREEN deployment successful. Traffic switched."
         }
         failure {
-            echo "❌ Deployment failed. BLUE is still serving traffic."
+            echo "❌ Pipeline failed. BLUE is still serving traffic."
         }
     }
 }
