@@ -32,15 +32,14 @@ pipeline {
             }
         }
 
-        stage('Deploy GREEN Version') {
-            steps {
-                sh '''
-                  sudo -u ashish kubectl apply -f lab-26-jenkins-blue-green/k8s/deployment-green.yaml
-                '''
-            }
-        }
+stage('Deploy GREEN Version') {
+    steps {
+        sh 'sudo -u ashish /usr/local/bin/kubectl apply -f lab-26-jenkins-blue-green/k8s/deployment-green.yaml'
+    }
+}
 
-        stage('Smoke Test GREEN') {
+
+     stage('Smoke Test GREEN') {
             steps {
                 sh '''
                   sleep 10
@@ -67,5 +66,13 @@ pipeline {
               '{"spec":{"selector":{"app":"myapp","version":"blue"}}}'
             '''
         }
+    }
+}
+stage('Smoke Test GREEN') {
+    steps {
+        sh '''
+        sleep 10
+        sudo -u ashish /usr/local/bin/kubectl get pods -l version=green
+        '''
     }
 }
