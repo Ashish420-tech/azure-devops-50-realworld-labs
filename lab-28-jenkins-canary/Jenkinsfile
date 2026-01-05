@@ -17,9 +17,7 @@ pipeline {
 
         stage('Build Canary Image') {
             steps {
-                sh '''
-                  docker build -t $IMAGE_NAME:$IMAGE_TAG app
-                '''
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} app'
             }
         }
 
@@ -32,16 +30,16 @@ pipeline {
                 )]) {
                     sh '''
                       echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                      docker push $IMAGE_NAME:$IMAGE_TAG
+                      docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
         }
 
-        stage('Deploy Stable (if not exists)') {
+        stage('Deploy Stable') {
             steps {
                 sh '''
-                  export KUBECONFIG=$KUBECONFIG
+                  export KUBECONFIG=${KUBECONFIG}
                   kubectl apply -f k8s/stable-deployment.yaml
                   kubectl apply -f k8s/service.yaml
                 '''
@@ -51,7 +49,7 @@ pipeline {
         stage('Deploy Canary') {
             steps {
                 sh '''
-                  export KUBECONFIG=$KUBECONFIG
+                  export KUBECONFIG=${KUBECONFIG}
                   kubectl apply -f k8s/canary-deployment.yaml
                 '''
             }
@@ -60,7 +58,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Canary deployed successfully. Traffic is now partially routed to Canary."
+            echo "Canary deployed successfully. Partial traffic is live."
         }
         failure {
-            echo "❌ Pipeline failed. Stable ver
+            echo "Pipeline failed. Stable version is still serving traffic."
+        }
+    }
+}
