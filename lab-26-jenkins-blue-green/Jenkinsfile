@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "ashishmondal420/lab23-jenkins-cicd"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Push Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                      docker build -t $IMAGE_NAME:latest \
+                        -f lab-23-jenkins-docker-build/Dockerfile \
+                        lab-23-jenkins-docker-build
+
+                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                      docker push $IMAGE_NAME:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy GREEN Version') {
+            steps {
+                sh '''
+                  sudo -u ashish kubectl apply -f lab-26-jenkins-blue-green/k8s/deployment-green.yaml
+                '''
+            }
+        }
+
+        stage('Smoke Test GREEN') {
+            steps {
+                sh '''
+                  sleep 10
+                  kubectl get pods -l version=green
+                '''
+            }
+        }
+
+        stage('Switch Traffic to GREEN') {
+            steps {
+                sh '''
+                  sudo -u ashish kubectl patch svc myapp-service -p \
+                  '{"spec":{"selector":{"app":"myapp","version":"green"}}}'
+                '''
+            }
+        }
+    }
+
+    post {
+        failure {
+            sh '''
+              echo "Rolling back to BLUE..."
+              sudo -u ashish kubectl patch svc myapp-service -p \
+              '{"spec":{"selector":{"app":"myapp","version":"blue"}}}'
+            '''
+        }
+    }
+}
