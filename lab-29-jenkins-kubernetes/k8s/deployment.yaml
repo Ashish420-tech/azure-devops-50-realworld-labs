@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab29-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lab29
+  template:
+    metadata:
+      labels:
+        app: lab29
+    spec:
+      containers:
+      - name: lab29-container
+        image: ashishmondal420/lab29:v1
+        ports:
+        - containerPort: 80

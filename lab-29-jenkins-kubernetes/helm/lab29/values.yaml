@@ -1,0 +1,9 @@
+replicaCount: 2
+
+image:
+  repository: ashishmondal420/lab29
+  tag: v1
+
+service:
+  type: NodePort
+  port: 80

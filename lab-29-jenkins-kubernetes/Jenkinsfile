@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE = "ashishmondal420/lab29"
+        TAG   = "v1"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/Ashish420-tech/azure-devops-50-realworld-labs.git'
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t $IMAGE:$TAG app/'
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'U',
+                    passwordVariable: 'P'
+                )]) {
+                    sh '''
+                    echo $P | docker login -u $U --password-stdin
+                    docker push $IMAGE:$TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy via Helm') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                    helm upgrade --install lab29 helm/lab29
+                    '''
+                }
+            }
+        }
+    }
+}
