@@ -17,7 +17,7 @@ pipeline {
 
         stage('Build Canary Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} app'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} lab-28-jenkins-canary/app'
             }
         }
 
@@ -40,8 +40,8 @@ pipeline {
             steps {
                 sh '''
                   export KUBECONFIG=${KUBECONFIG}
-                  kubectl apply -f k8s/stable-deployment.yaml
-                  kubectl apply -f k8s/service.yaml
+                  kubectl apply -f lab-28-jenkins-canary/k8s/stable-deployment.yaml
+                  kubectl apply -f lab-28-jenkins-canary/k8s/service.yaml
                 '''
             }
         }
@@ -50,7 +50,7 @@ pipeline {
             steps {
                 sh '''
                   export KUBECONFIG=${KUBECONFIG}
-                  kubectl apply -f k8s/canary-deployment.yaml
+                  kubectl apply -f lab-28-jenkins-canary/k8s/canary-deployment.yaml
                 '''
             }
         }
