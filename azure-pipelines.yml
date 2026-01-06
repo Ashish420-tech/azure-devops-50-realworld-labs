@@ -13,7 +13,10 @@ stages:
   - job: UpdateGitOps
     displayName: Update GitOps Manifest
     pool:
-      vmImage: ubuntu-latest
+      name: Default
+      demands:
+         - Agent.Name -equals wsl-agent
+
 
     steps:
     - checkout: self
