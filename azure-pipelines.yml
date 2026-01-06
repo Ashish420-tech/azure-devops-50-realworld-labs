@@ -1,33 +1,33 @@
-trigger: none
-pr: none
-- main :
-
-pool:
-  name: Default   # your self-hosted Windows agent
+trigger:
+  branches:
+    include:
+      - main
 
 variables:
-  imageName: nodejs-ci-lab
+  IMAGE_TAG: $(Build.BuildId)
 
-steps:
-# 1️⃣ Checkout source
-- checkout: self
-  clean: true
+stages:
+- stage: CI
+  displayName: Build and Update GitOps
+  jobs:
+  - job: UpdateGitOps
+    displayName: Update GitOps Manifest
+    pool:
+      vmImage: ubuntu-latest
 
-# 2️⃣ Verify Docker is running
-- task: CmdLine@2
-  displayName: "Verify Docker"
-  inputs:
-    script: |
-      docker version
-      docker info
+    steps:
+    - checkout: self
+      persistCredentials: true
 
-# 3️⃣ Build Docker image (NO CACHE)
-- task: Docker@2
-  displayName: "Build Docker image"
-  inputs:
-    command: build
-    dockerfile: 04-docker/lab-05-docker-ci/Dockerfile
-    buildContext: .
-    tags: |
-      $(Build.BuildId)
-    arguments: --no-cache
+    - script: |
+        echo "Updating image tag in GitOps manifest"
+        sed -i "s|image: nginx:.*|image: nginx:${IMAGE_TAG}|g" lab-30-argocd-gitops/deployment.yaml
+      displayName: Update image tag
+
+    - script: |
+        git config user.email "ci@azuredevops.com"
+        git config user.name "Azure DevOps CI"
+        git add lab-30-argocd-gitops/deployment.yaml
+        git commit -m "CI: update image tag to ${IMAGE_TAG}"
+        git push origin main
+      displayName: Commit GitOps update
