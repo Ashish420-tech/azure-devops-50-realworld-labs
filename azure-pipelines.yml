@@ -6,31 +6,46 @@ trigger:
 variables:
   IMAGE_TAG: $(Build.BuildId)
 
+pool:
+  name: Default
+  demands:
+    - Agent.Name -equals wsl-agent
+
 stages:
 - stage: CI
-  displayName: Build and Update GitOps
+  displayName: CI - Update GitOps Repo
   jobs:
   - job: UpdateGitOps
     displayName: Update GitOps Manifest
-    pool:
-      name: Default
-      demands:
-         - Agent.Name -equals wsl-agent
-
-
     steps:
+
+    # Checkout repo with push permission
     - checkout: self
       persistCredentials: true
 
+    # Switch out of detached HEAD
+    - script: |
+        echo "Checking out main branch"
+        git checkout main
+      displayName: Checkout main branch
+
+    # Update image tag in GitOps manifest
     - script: |
         echo "Updating image tag in GitOps manifest"
         sed -i "s|image: nginx:.*|image: nginx:${IMAGE_TAG}|g" lab-30-argocd-gitops/deployment.yaml
-      displayName: Update image tag
+      displayName: Update image tag in deployment.yaml
 
+    # Commit and push back to GitHub
     - script: |
         git config user.email "ci@azuredevops.com"
         git config user.name "Azure DevOps CI"
+
         git add lab-30-argocd-gitops/deployment.yaml
-        git commit -m "CI: update image tag to ${IMAGE_TAG}"
-        git push origin main
+
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "CI: update image tag to ${IMAGE_TAG}"
+          git push origin main
+        fi
       displayName: Commit GitOps update
