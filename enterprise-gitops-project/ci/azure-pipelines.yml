@@ -1,0 +1,14 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Docker@2
+  inputs:
+    command: build
+    Dockerfile: enterprise-gitops-project/app/Dockerfile
+    repository: enterprise-gitops-app
+    tags: |
+      day1
