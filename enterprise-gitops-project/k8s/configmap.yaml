@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  index.html: |
+    <html>
+      <body>
+        <h1>Hello from ConfigMap 🚀</h1>
+        <p>This page is injected at runtime</p>
+      </body>
+    </html>

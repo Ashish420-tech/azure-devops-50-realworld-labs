@@ -9,3 +9,7 @@ minikube-linux-amd64
 
 # Node
 node_modules/
+# Terraform
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.backup
