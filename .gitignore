@@ -9,6 +9,7 @@ minikube-linux-amd64
 
 # Node
 node_modules/
+package-lock.json
 # Terraform
 **/.terraform/
 **/terraform.tfstate
