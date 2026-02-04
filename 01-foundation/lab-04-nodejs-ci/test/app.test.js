@@ -6,4 +6,9 @@ describe("GET /", () => {
     const response = await request(app).get("/");
     expect(response.statusCode).toBe(200);
   });
+
+  it("should return hi message", async () => {
+    const response = await request(app).get("/");
+    expect(response.text).toBe("hi");
+  });
 });
