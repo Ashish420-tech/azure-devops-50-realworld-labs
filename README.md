@@ -1,552 +1,180 @@
-# 🚀 Azure DevOps – 50 Real-World CI/CD Labs
-
-> Maintained and implemented by **Ashish Mondal**, focusing on real-world Azure DevOps
-> troubleshooting, CI/CD failures, and production-grade deployment strategies.
-
-
-This repository contains **50 real-world, hands-on Azure DevOps labs** focused on
-**CI/CD pipelines, Docker, Kubernetes, Terraform, and Azure**.
-
-Unlike tutorial-based projects, these labs are built with a **production mindset**:
-❌ failures  
-✅ troubleshooting  
-🧠 root-cause analysis  
-🔁 fixes and improvements  
-
-This repo reflects **practical DevOps experience**, not just theory.
-
----
-
-## 🧑‍💻 Who This Repo Is For
-- DevOps Engineers (3–8 years)
-- Azure DevOps / CI-CD roles
-- Kubernetes & Cloud Engineers
-- Candidates preparing for **real interviews**, not exams
-
----
-
-## 🛠 Tools & Technologies Used
-- Azure DevOps (Pipelines, Repos, Agents)
-- Docker & Docker Hub
-- Kubernetes (Minikube / AKS-compatible)
-- Terraform (Azure IaC)
-- Azure (VMs, Networking, Storage)
-- Git & GitHub
-- Linux & Shell Scripting
-- Node.js sample applications
-
----
-
-## 🧪 Lab Index (Complete Overview)
-
-### 🔹 Foundation & CI
-| Lab | Topic |
-|----|------|
-| Lab-01 | Azure DevOps Repo & Pipeline Basics |
-| Lab-02 | YAML Pipeline Fundamentals |
-| Lab-03 | Node.js CI Pipeline |
-| Lab-04 | Handling Build Errors in Pipelines |
-| Lab-05 | Agent & Workspace Debugging |
-
----
-
-### 🔹 Docker & Containerization
-| Lab | Topic |
-|----|------|
-| Lab-06 | Dockerfile Basics |
-| Lab-07 | CI Pipeline with Docker Build |
-| Lab-08 | Docker Push to Docker Hub |
-| Lab-09 | Docker Build Context Issues |
-| Lab-10 | Image Tagging & Versioning |
+🚀 Azure DevOps – 50 Real-World CI/CD & Cloud DevOps Labs
 
----
+This repository showcases hands-on, real-world DevOps scenarios implemented as part of my DevOps and Cloud engineering journey.
+It focuses on practical CI/CD pipelines, containerization, Kubernetes deployments, Infrastructure as Code, and troubleshooting patterns commonly faced in production environments.
 
-### 🔹 Kubernetes (Local → Production Style)
-| Lab | Topic |
-|----|------|
-| Lab-11 | Kubernetes Deployment Basics |
-| Lab-12 | Services & Pod Networking |
-| Lab-13 | Resource Requests & Limits |
-| Lab-14 | Helm Chart Deployment |
-| Lab-15 | Helm Upgrade & Rollback |
-| Lab-16 | ImagePullBackOff Troubleshooting |
+The labs are designed around real DevOps problems, not just tutorials, covering build failures, deployment strategies, infrastructure automation, and monitoring concepts.
 
----
+🎯 Skills & Technologies Demonstrated
 
-### 🔹 Azure DevOps + Kubernetes CI/CD
-| Lab | Topic |
-|----|------|
-| Lab-17 | Azure DevOps → Kubernetes CI/CD |
-| Lab-18 | Rolling Update Strategy |
-| Lab-19 | Blue-Green Deployment |
-| Lab-20 | Zero-Downtime Deployment Patterns |
+CI/CD Pipelines
 
----
+Azure DevOps YAML pipelines
 
-### 🔹 Terraform & Infrastructure as Code
-| Lab | Topic |
-|----|------|
-| Lab-21 | Terraform Basics |
-| Lab-22 | Azure VM Provisioning |
-| Lab-23 | Terraform State & Backend |
-| Lab-24 | IaC + Azure DevOps Pipeline |
-| Lab-25 | Destroy & Cost Optimization |
+Jenkins pipelines
 
----
+Pipeline debugging and fixes
 
-### 🔹 Advanced DevOps (Planned / Ongoing)
-| Lab | Topic |
-|----|------|
-| Lab-26+ | AKS Architecture (Cost-Optimized) |
-| Lab-30+ | Monitoring & Logging |
-| Lab-40+ | Security & Secrets |
-| Lab-50 | End-to-End Production CI/CD |
+Containerization
 
-> ⚠️ Some labs intentionally use **Minikube instead of AKS**  
-> to demonstrate **cost-optimized non-production design**, while remaining AKS-compatible.
+Docker image creation
 
----
+Multi-stage Docker builds
 
-## 🔥 Key Real-World Problems Solved
-- Git push & branch misconfiguration
-- Azure DevOps agent issues
-- Docker authentication failures
-- ImagePullBackOff errors
-- YAML syntax & indentation bugs
-- Kubernetes rollout failures
-- Resource starvation & limits
-- Zero-downtime deployment challenges
+Containerized application deployment
 
----
+Kubernetes
 
-## 🎯 What Interviewers Can Ask From This Repo
-- “Explain a CI/CD failure you debugged”
-- “How do you handle zero downtime?”
-- “Why use resource limits?”
-- “Minikube vs AKS?”
-- “How do you reduce cloud cost?”
-- “What breaks first in pipelines?”
+Kubernetes deployments and services
 
-👉 Every answer exists **inside these labs**.
+Blue-Green and rolling deployment strategies
 
----
+Minikube-based Kubernetes labs
 
-## 📌 Why This Repository Matters
-✔️ Real failures, not happy paths  
-✔️ Production-style CI/CD  
-✔️ Cost-aware cloud usage  
-✔️ Interview-ready DevOps experience  
+Troubleshooting pod and service issues
 
----
-🔹 LAB 1–5 : Azure DevOps & Git (FOUNDATION)
-🧪 Lab-01: Repo & Pipeline Basics
+Infrastructure as Code (IaC)
 
-Problem Faced
+Terraform with Azure
 
-Pipeline not triggering after commit
+Automated infrastructure provisioning
 
-Error / Symptom
+Basic state and resource management
 
-No run created in Azure DevOps
+Cloud & DevOps Practices
 
-Root Cause
+Azure DevOps project configuration
 
-Wrong branch selected in pipeline trigger
+Environment-based deployments
 
-Fix / Learning
+CI/CD integration with containers and Kubernetes
 
-Corrected trigger: branch in YAML
+Monitoring and operational awareness
 
-Learned how pipeline triggers work
+📁 Repository Structure (High-Level)
+azure-devops-50-realworld-labs/
+│
+├── ci-cd/                 # CI/CD pipeline labs
+├── docker/                # Docker build & image labs
+├── kubernetes/            # Kubernetes deployment & troubleshooting labs
+├── terraform/             # Terraform & Azure IaC labs
+├── scripts/               # Automation & helper scripts
+├── screenshots/           # Pipeline / deployment screenshots (where applicable)
+└── README.md
 
-🧪 Lab-02: YAML Pipeline Basics
 
-Problem Faced
+Each lab folder contains YAML files, scripts, and configuration files used to solve a specific DevOps scenario.
 
-YAML validation failed
+⭐ Highlighted Real-World Labs
+🔹 CI/CD Pipeline Implementation & Debugging
 
-Error / Symptom
+Built CI/CD pipelines using Azure DevOps YAML
 
-mapping values are not allowed here
+Identified and fixed pipeline build and deployment errors
 
-Root Cause
+Integrated source code with automated build workflows
 
-Incorrect indentation in YAML
+🔹 Docker & Container Workflows
 
-Fix / Learning
+Created Dockerfiles for application builds
 
-Fixed spacing
+Automated Docker image creation through pipelines
 
-Learned YAML is indentation-sensitive
+Tested container images locally and in CI/CD flows
 
-🧪 Lab-03: Node.js CI Pipeline
+🔹 Kubernetes Deployments
 
-Problem Faced
+Deployed containerized applications to Kubernetes
 
-Build failed on agent
+Implemented Blue-Green deployment strategy
 
-Error / Symptom
+Debugged pod failures, service exposure, and selector mismatches
 
-npm: command not found
+🔹 Terraform & Cloud Infrastructure
 
-Root Cause
+Provisioned Azure cloud resources using Terraform
 
-Node.js not installed on agent
+Practiced infrastructure automation and repeatable deployments
 
-Fix / Learning
+Integrated IaC workflows with CI/CD concepts
 
-Used Microsoft-hosted agent with Node
+🛠 Example Lab Breakdown
+🔸 Blue-Green Deployment (Kubernetes)
 
-Verified versions using node -v
+Problem: Deploy application updates without downtime
+Approach:
 
-🧪 Lab-04: Build Errors Handling
+Maintain two environments (Blue & Green)
 
-Problem Faced
+Switch traffic using Kubernetes services
+Tools: Kubernetes, Azure DevOps Pipelines
+Learning Outcome:
 
-Pipeline failed randomly
+Zero-downtime deployment concepts
 
-Error / Symptom
+Rollback safety and service selector management
 
-App directory not found
+🔸 Terraform Azure Infrastructure Lab
 
-Root Cause
+Problem: Manual cloud provisioning is error-prone
+Approach:
 
-Wrong working directory
+Use Terraform to provision Azure resources
 
-Fix / Learning
+Apply infrastructure changes via code
+Tools: Terraform, Azure
+Learning Outcome:
 
-Used workingDirectory
+Infrastructure as Code fundamentals
 
-Learned agent workspace structure
+Repeatable and auditable cloud deployments
 
-🧪 Lab-05: Agent Debugging
+🧪 How to Use This Repository
 
-Problem Faced
+Clone the repository:
 
-Commands running but output unclear
+git clone https://github.com/Ashish420-tech/azure-devops-50-realworld-labs.git
 
-Error / Symptom
 
-Debugging difficult
+Navigate to any lab folder:
 
-Root Cause
+cd kubernetes/lab-19
 
-No logging enabled
 
-Fix / Learning
+Review:
 
-Added echo, ls, pwd
+YAML files
 
-Learned pipeline debugging techniques
+Dockerfiles
 
-🔹 LAB 6–10 : Docker (VERY IMPORTANT)
-🧪 Lab-06: Dockerfile Basics
+Terraform configs
 
-Problem Faced
+Scripts
 
-Docker image build failed
+Follow comments inside files for execution and learning steps.
 
-Error / Symptom
+These labs are intended for learning and demonstration purposes, not as production-ready templates.
 
-COPY failed: file not found
+📌 Why This Repository Matters
 
-Root Cause
+This repository demonstrates:
 
-Wrong file path in Dockerfile
+Practical DevOps problem-solving
 
-Fix / Learning
+Exposure to real CI/CD failures and fixes
 
-Corrected build context
+Hands-on work with containers, Kubernetes, and IaC
 
-Understood Docker build context
+Understanding of production-style deployment patterns
 
-🧪 Lab-07: Docker Build in CI
+It directly supports my transition into DevOps / Cloud Engineering roles by providing verifiable evidence of hands-on experience.
 
-Problem Faced
+🔗 Links
 
-Docker build failed in pipeline
+GitHub: https://github.com/Ashish420-tech
 
-Error / Symptom
+LinkedIn: https://www.linkedin.com/in/ashish-mondal-a4190638a/
 
-Docker daemon not available
+📄 License
 
-Root Cause
-
-Docker not installed on agent
-
-Fix / Learning
-
-Used Microsoft-hosted Linux agent
-
-🧪 Lab-08: Docker Push to Docker Hub
-
-Problem Faced
-
-Image push failed
-
-Error / Symptom
-
-authentication required
-
-Root Cause
-
-Docker Hub credentials missing
-
-Fix / Learning
-
-Created service connection
-
-Learned secure credential handling
-
-🧪 Lab-09: Docker Build Context Issue
-
-Problem Faced
-
-Build succeeded locally, failed in CI
-
-Error / Symptom
-
-Files missing during build
-
-Root Cause
-
-.dockerignore excluded files
-
-Fix / Learning
-
-Fixed .dockerignore
-
-Learned CI vs local differences
-
-🧪 Lab-10: Image Tagging
-
-Problem Faced
-
-Old image deployed again
-
-Error / Symptom
-
-Changes not reflected
-
-Root Cause
-
-Used latest tag
-
-Fix / Learning
-
-Implemented versioned tags
-
-Learned why latest is dangerous
-
-🔹 LAB 11–16 : Kubernetes (CRITICAL)
-🧪 Lab-11: Kubernetes Deployment
-
-Problem Faced
-
-Pod not starting
-
-Error / Symptom
-
-CrashLoopBackOff
-
-Root Cause
-
-Wrong container port
-
-Fix / Learning
-
-Fixed container spec
-
-Learned pod debugging
-
-🧪 Lab-12: Kubernetes Service
-
-Problem Faced
-
-App not accessible
-
-Error / Symptom
-
-Service reachable, app not
-
-Root Cause
-
-Selector mismatch
-
-Fix / Learning
-
-Corrected labels
-
-Learned Service → Pod mapping
-
-🧪 Lab-13: Resource Limits
-
-Problem Faced
-
-Pod restarted automatically
-
-Error / Symptom
-
-OOMKilled
-
-Root Cause
-
-Memory limit too low
-
-Fix / Learning
-
-Adjusted limits
-
-Learned resource planning
-
-🧪 Lab-14: Helm Deployment
-
-Problem Faced
-
-Helm install failed
-
-Error / Symptom
-
-Template rendering error
-
-Root Cause
-
-Incorrect values.yaml
-
-Fix / Learning
-
-Fixed values
-
-Learned Helm templating
-
-🧪 Lab-15: Helm Upgrade
-
-Problem Faced
-
-New version failed
-
-Error / Symptom
-
-App broken after upgrade
-
-Root Cause
-
-Bad image version
-
-Fix / Learning
-
-Used helm rollback
-
-Learned safe rollback strategy
-
-🧪 Lab-16: ImagePullBackOff
-
-Problem Faced
-
-Pod stuck in ImagePullBackOff
-
-Error / Symptom
-
-Image not pulled
-
-Root Cause
-
-Wrong image name / auth issue
-
-Fix / Learning
-
-Fixed image reference
-
-Learned image pull troubleshooting
-
-🔹 LAB 17–19 : CI/CD + K8s (FLAGSHIP)
-🧪 Lab-17: Azure DevOps → Kubernetes
-
-Problem Faced
-
-Pipeline deployed but app not updated
-
-Error / Symptom
-
-Old version still running
-
-Root Cause
-
-Kubernetes context mismatch
-
-Fix / Learning
-
-Fixed kubeconfig
-
-Learned pipeline → cluster flow
-
-🧪 Lab-18: Rolling Update
-
-Problem Faced
-
-Pods restarted simultaneously
-
-Error / Symptom
-
-Temporary downtime
-
-Root Cause
-
-Default rolling strategy
-
-Fix / Learning
-
-Configured maxUnavailable
-
-Learned zero-downtime rollout
-
-🧪 Lab-19: Blue-Green Deployment
-
-Problem Faced
-
-Traffic not switching
-
-Error / Symptom
-
-Old pods still serving traffic
-
-Root Cause
-
-Service selector mismatch
-
-Fix / Learning
-
-Corrected labels
-
-Learned safe production deployment
----
-
-## 👤 Author & Maintainer
-
-**:contentReference[oaicite:0]{index=0}**  
-Senior DevOps Engineer | Azure DevOps | CI/CD | Docker | Kubernetes | Terraform  
-
-🔹 This repository represents my **hands-on DevOps journey**, where I built and troubleshot
-real-world CI/CD pipelines, containerized applications, and Kubernetes deployments.
-
-🔹 Every lab is based on **actual problems I faced**, including pipeline failures,
-Docker build issues, Kubernetes deployment errors, and production-style rollout strategies
-(Rolling, Blue-Green).
-
-🔹 The focus of this repository is **practical DevOps experience**, not theoretical demos.
-
-📌 **Key strengths demonstrated in this repo:**
-- CI/CD pipeline design and debugging
-- Docker build & push automation
-- Kubernetes deployment & troubleshooting
-- Zero-downtime deployment strategies
-- Cost-aware cloud and AKS-compatible architecture
-
-🔗 GitHub: https://github.com/Ashish420-tech  
-🔗 LinkedIn: https://www.linkedin.com/in/ashish-mondal-a4190638a/
-
-## 📬 Author
-**Ashish Mondal**  
-DevOps Engineer | Azure | CI/CD | Kubernetes | Terraform  
-
-
+This repository is intended for learning and portfolio demonstration purposes.
